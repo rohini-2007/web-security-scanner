@@ -15,12 +15,12 @@ import json
 import sys
 from datetime import datetime
 from urllib.parse import urlparse
-from flask import Flask, render_templates
+from flask import Flask, render_template
 
 import requests
 
 TIMEOUT = 10
-app=Flask(__name__)
+app = Flask(__name__)
 EVIL_ORIGIN = "https://evil.example"
 
 # header name -> (why it matters, weight)
@@ -35,7 +35,7 @@ SECURITY_HEADERS = {
 
 @app.route('/')
 def home():
-    return render_templates('index.html')
+    return render_template('index.html')
 
 
 def fetch(url, headers=None):
@@ -128,7 +128,6 @@ def scan(url):
     results.append(check_cors(url))
     results.append(check_cookies(response))
 
-    # max points: HTTPS 20 + headers 70 + CORS 10 + cookies 10 = 110
     max_points = 20 + sum(w for _, w in SECURITY_HEADERS.values()) + 10 + 10
     earned = sum(r["points"] for r in results)
     score = round(earned / max_points * 100)
@@ -156,29 +155,28 @@ def print_report(report):
         print(f" {icons[r['status']]} {r['check']:<28} {r['status']}")
         print(f"     {r['detail']}")
     print("-" * 64)
-    print(f" SCORE: {report['score']}/100   GRADE: {report['grade']}")
+    print(f" SCORE: {report['score']}/100    GRADE: {report['grade']}")
     print("=" * 64)
 
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simple web security scanner")
     parser.add_argument("url", nargs="?", help="Target URL, e.g. https://example.com")
     parser.add_argument("--json", metavar="FILE", help="Save report as JSON")
     args = parser.parse_args()
 
-    target = args.url or input("Enter website URL to scan (e.g. https://example.com): ").strip()
-    if not target:
-        print("No URL given.")
-        sys.exit(1)
-    url = target if target.startswith("http") else "https://" + target
-    report = scan(url)
-    print_report(report)
+    if args.url or len(sys.argv) > 1:
+        target = args.url or input("Enter website URL to scan (e.g. https://example.com): ").strip()
+        if not target:
+            print("No URL given.")
+            sys.exit(1)
+        url = target if target.startswith("http") else "https://" + target
+        report = scan(url)
+        print_report(report)
 
-    if args.json:
-        with open(args.json, "w") as f:
-            json.dump(report, f, indent=2)
-        print(f"Report saved to {args.json}")
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        if args.json:
+            with open(args.json, "w") as f:
+                json.dump(report, f, indent=2)
+            print(f"Report saved to {args.json}")
+    else:
+        app.run(debug=True)
