@@ -15,10 +15,12 @@ import json
 import sys
 from datetime import datetime
 from urllib.parse import urlparse
+from flask import Flask
 
 import requests
 
 TIMEOUT = 10
+app=Flask(__name__)
 EVIL_ORIGIN = "https://evil.example"
 
 # header name -> (why it matters, weight)
@@ -175,4 +177,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
