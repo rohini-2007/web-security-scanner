@@ -15,7 +15,7 @@ import json
 import sys
 from datetime import datetime
 from urllib.parse import urlparse
-from flask import Flask
+from flask import Flask, render_template
 
 import requests
 
@@ -32,6 +32,10 @@ SECURITY_HEADERS = {
     "Referrer-Policy": ("Controls referrer information leakage", 5),
     "Permissions-Policy": ("Restricts browser features", 5),
 }
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 
 def fetch(url, headers=None):
