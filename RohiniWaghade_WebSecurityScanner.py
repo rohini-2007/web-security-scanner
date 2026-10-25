@@ -15,7 +15,7 @@ import json
 import sys
 from datetime import datetime
 from urllib.parse import urlparse
-from flask import Flask, render_template
+from flask import Flask, render_template,  request, jsonify  #
 
 import requests
 
@@ -33,9 +33,30 @@ SECURITY_HEADERS = {
     "Permissions-Policy": ("Restricts browser features", 5),
 }
 
+ # Make sure request and jsonify are imported
+
+# ... (keep your existing code up to the routes) ...
+
 @app.route('/')
 def home():
     return render_template('index.html')
+
+# NEW API ROUTE FOR THE WEB UI
+@app.route('/api/scan', methods=['POST'])
+def api_scan():
+    data = request.get_json()
+    target = data.get('url')
+    if not target:
+        return jsonify({"error": "No URL provided"}), 400
+    
+    url = target if target.startswith("http") else "https://" + target
+    try:
+        report = scan(url)
+        return jsonify(report)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ... (keep the rest of your functions and CLI block) ...
 
 
 def fetch(url, headers=None):
