@@ -15,7 +15,7 @@ import json
 import sys
 from datetime import datetime
 from urllib.parse import urlparse
-from flask import Flask, render_web
+from flask import Flask, render_templates
 
 import requests
 
@@ -35,7 +35,7 @@ SECURITY_HEADERS = {
 
 @app.route('/')
 def home():
-    return render_web('index.html')
+    return render_templates('index.html')
 
 
 def fetch(url, headers=None):
