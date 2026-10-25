@@ -15,7 +15,7 @@ import json
 import sys
 from datetime import datetime
 from urllib.parse import urlparse
-from flask import Flask, render_template
+from flask import Flask, render_web
 
 import requests
 
