@@ -35,7 +35,7 @@ SECURITY_HEADERS = {
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_web('index.html')
 
 
 def fetch(url, headers=None):
